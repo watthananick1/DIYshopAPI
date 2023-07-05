@@ -3,16 +3,19 @@ using DIYshopAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DIYshopAPI.Migrations.Product
+namespace DIYshopAPI.Migrations.OrderItem
 {
-    [DbContext(typeof(ProductContext))]
-    partial class ProductContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(OrderItemContext))]
+    [Migration("20230705072030_addOrderItemDb")]
+    partial class addOrderItemDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,7 +24,7 @@ namespace DIYshopAPI.Migrations.Product
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DIYshopAPI.Models.Product", b =>
+            modelBuilder.Entity("DIYshopAPI.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,33 +32,25 @@ namespace DIYshopAPI.Migrations.Product
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Item_Price")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ImgPoduct")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Item_Quantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("N_Id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Stock")
+                    b.Property<int>("Order_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
+                    b.Property<int>("Product_id")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

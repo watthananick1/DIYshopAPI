@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using DIYshopAPI.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +28,39 @@ builder.Services.AddDbContext<ProductContext>(options =>
     options.UseSqlServer(
        builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddDbContext<OrderContext>(options =>
+{
+    options.UseSqlServer(
+       builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddDbContext<OrderItemContext>(options =>
+{
+    options.UseSqlServer(
+       builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddDbContext<PromotionContext>(options =>
+{
+    options.UseSqlServer(
+       builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                builder.Configuration.GetSection("AppSettings:Token").Value!)),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
 
 var app = builder.Build();
 
@@ -36,6 +73,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

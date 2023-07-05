@@ -8,6 +8,6 @@ namespace DIYshopAPI.Data
         public ProductContext(DbContextOptions<ProductContext> options) : base(options){ 
 
         }
-        public DbSet<Product> products { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }

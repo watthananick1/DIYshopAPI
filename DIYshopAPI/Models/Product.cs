@@ -7,6 +7,8 @@ namespace DIYshopAPI.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        public string N_Id { get; set; }
+        [Required]
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
