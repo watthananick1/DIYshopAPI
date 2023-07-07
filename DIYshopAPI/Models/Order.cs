@@ -11,7 +11,7 @@ namespace DIYshopAPI.Models
         [Required]
         public string OrderId { get; set; }
         [Required]
-        public decimal Total_Price { get; set; }
+        public decimal Total_Price { get; set; } = decimal.Zero;
         [Required]
         public int User_Id { get; set;}
         public int? Customer_Id { get; set; }

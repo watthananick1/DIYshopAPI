@@ -57,28 +57,28 @@ namespace DIYshopAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
         }
 
-        /*[HttpPut("{id}")]
+        [HttpPut("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, CustomerUpdate customerUpdate)
+        public async Task<IActionResult> Update(int id, OrderUpdate orderUpdate)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var customer = await _context.Orders.FindAsync(id);
-            var dataCustomer = customer;
-            if (customer == null) return BadRequest();
+            var order = await _context.Orders.FindAsync(id);
+            var dataOrder = order;
+            if (order == null) return BadRequest();
 
-            customer.Firstname = customerUpdate.Firstname ?? dataCustomer.Firstname;
-            customer.Lastname = customerUpdate.Lastname ?? dataCustomer.Lastname;
-            customer.Email = customerUpdate.Email ?? dataCustomer.Email;
-            customer.PhoneNumber = customerUpdate.PhoneNumber ?? dataCustomer.PhoneNumber;
+            order.Total_Price = orderUpdate.Total_Price ?? dataOrder.Total_Price;
+            order.User_Id = orderUpdate.User_Id ?? dataOrder.User_Id;
+            order.Customer_Id = orderUpdate.Customer_Id ?? dataOrder.Customer_Id;
+            order.Promotion_id = orderUpdate.Promotion_id ?? dataOrder.Promotion_id;
 
             await _context.SaveChangesAsync();
             return NoContent();
-        }*/
+        }
 
         [HttpDelete("{id}")]
         [Authorize]
