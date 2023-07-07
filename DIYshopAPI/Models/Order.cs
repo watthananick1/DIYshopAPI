@@ -7,7 +7,7 @@ namespace DIYshopAPI.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         [Required]
         public string OrderId { get; set; }
         [Required]
