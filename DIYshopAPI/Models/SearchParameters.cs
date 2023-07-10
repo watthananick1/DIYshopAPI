@@ -53,5 +53,12 @@ namespace DIYshopAPI.Models
         public string? ImgPoduct { get; set; }
     }
 
+    public class PromotionParameters
+    {
+        public Guid? PromotionId { get; set; }
+        public DateTime? StartPromotion { get; set; }
+        public DateTime? EndPromotion { get; set; }
+    }
+
 
 }

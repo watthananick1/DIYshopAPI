@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DIYshopAPI.Migrations.Promotion
 {
     [DbContext(typeof(PromotionContext))]
-    [Migration("20230705081418_addPromotionDb")]
-    partial class addPromotionDb
+    [Migration("20230710142146_addPromotionContext")]
+    partial class addPromotionContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,28 +27,23 @@ namespace DIYshopAPI.Migrations.Promotion
 
             modelBuilder.Entity("DIYshopAPI.Models.Promotion", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("IdProduct_One")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("EndPromotion")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("IdProduct_Two")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("PromotionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("NameProduct_One")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameProduct_Two")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("StartPromotion")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

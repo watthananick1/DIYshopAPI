@@ -4,6 +4,7 @@ using DIYshopAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DIYshopAPI.Migrations.Promotion
 {
     [DbContext(typeof(PromotionContext))]
-    partial class PromotionContextModelSnapshot : ModelSnapshot
+    [Migration("20230710142543_addPromotionVerTwo")]
+    partial class addPromotionVerTwo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,25 +48,6 @@ namespace DIYshopAPI.Migrations.Promotion
                     b.HasKey("Id");
 
                     b.ToTable("Promotions");
-                });
-
-            modelBuilder.Entity("DIYshopAPI.Models.PromotionProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Product_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Promotion_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PromotionProducts");
                 });
 #pragma warning restore 612, 618
         }

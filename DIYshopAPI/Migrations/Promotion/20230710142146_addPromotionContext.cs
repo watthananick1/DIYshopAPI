@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DIYshopAPI.Migrations.Promotion
 {
     /// <inheritdoc />
-    public partial class addPromotionDb : Migration
+    public partial class addPromotionContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,11 +15,11 @@ namespace DIYshopAPI.Migrations.Promotion
                 name: "Promotions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NameProduct_One = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NameProduct_Two = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdProduct_One = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdProduct_Two = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PromotionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartPromotion = table.Column<DateTime>(type: "datetime", nullable: false),
+                    EndPromotion = table.Column<DateTime>(type: "datetime", nullable: false),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>

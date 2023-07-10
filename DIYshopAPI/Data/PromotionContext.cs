@@ -9,5 +9,6 @@ namespace DIYshopAPI.Data
         
         }
         public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<PromotionProduct> PromotionProducts { get; set; }
     }
 }

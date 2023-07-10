@@ -1,22 +1,36 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DIYshopAPI.Models
 {
     public class Promotion
     {
         [Key]
-        public Guid Id { get; set; }
-        [Required]
-        public string NameProduct_One { get; set; }
-        [Required]
-        public string NameProduct_Two { get; set; }
-        [Required]
-        public string IdProduct_One { get; set; }
-        [Required]
-        public string IdProduct_Two { get; set; }
-        [Required]
-        public decimal Discount { get; set; }
+        public int Id { get; set; }
 
+        [Required]
+        public Guid PromotionId { get; set; } = Guid.NewGuid();
 
+        [Required]
+        public DateTime StartPromotion { get; set; } = DateTime.Now;
+
+        [Required]
+        public DateTime EndPromotion { get; set; } = DateTime.Now.AddMonths(1);
+
+        [Required]
+        public decimal Discount { get; set; } = decimal.Zero;
+    }
+
+    public class PromotionProduct
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int Promotion_Id { get; set; }
+
+        [Required]
+        public int Product_Id { get; set; }
     }
 }

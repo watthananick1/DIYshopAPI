@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using System.Globalization;
+using System.Linq;
 
 namespace DIYshopAPI.Controllers
 {
@@ -18,13 +19,20 @@ namespace DIYshopAPI.Controllers
         private readonly UserdbContext _userContext;
         private readonly OrderContext _orderContext;
         private readonly CustomerContext _customerContext;
-        public SearchController(OrderItemContext orderItemContext, ProductContext productContext, UserdbContext userContext, OrderContext orderContext, CustomerContext customerContext)
+        private readonly PromotionContext _promotionContext;
+        public SearchController(OrderItemContext orderItemContext, 
+            ProductContext productContext, 
+            UserdbContext userContext, 
+            OrderContext orderContext, 
+            CustomerContext customerContext, 
+            PromotionContext promotionContext)
         {
             _orderItemContext = orderItemContext;
             _productContext = productContext;
             _userContext = userContext;
             _orderContext = orderContext;
             _customerContext = customerContext;
+            _promotionContext = promotionContext;
         }
 
         [HttpPost("searchStock")]
@@ -183,10 +191,10 @@ namespace DIYshopAPI.Controllers
                 List<int> orderIds = await query.Where(item => item.Date.Month == monthValue)
                              .Select(o => o.Id).ToListAsync();
 
-                foreach(var i in orderIds)
+               /* foreach(var i in orderIds)
                 {
                     Console.WriteLine(i);
-                }
+                }*/
 
                 queryItem = queryItem
                     .Where(item => orderIds.Contains(item.Order_Id));
@@ -276,9 +284,118 @@ namespace DIYshopAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("searchPromotions")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SearchPromotion(PromotionParameters parameters)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            IQueryable<Promotion> query = _promotionContext.Promotions.AsQueryable();
+            IQueryable<PromotionProduct> queryItem = _promotionContext.PromotionProducts.AsQueryable();
+            IQueryable<Product> queryProduct = _productContext.Products.AsQueryable();
+
+            List<Promotion> bindingSource2 = new List<Promotion>();
+            List<PromotionProduct> filteredPromotionItems = new List<PromotionProduct>();
+            List<int> ids = new List<int>();
 
 
+            // Filter by promotion ID
+            if (parameters.PromotionId.HasValue)
+            {
+                Guid promotionId = parameters.PromotionId.Value;
+                int id = await query
+                    .Where(item => item.PromotionId == promotionId)
+                    .Select(item => item.Id).FirstAsync();
 
+                List<int> productIds = await queryItem
+                    .Where(item => item.Promotion_Id == id)
+                    .Select(item => item.Product_Id).ToListAsync();
+                query = query.Where(item => item.Id == id);
+
+                queryItem = queryItem.Where(item => item.Promotion_Id == id);
+
+                queryProduct = queryProduct.Where(p => productIds.Contains(p.Id));
+
+                filteredPromotionItems = await queryItem.ToListAsync();
+                bindingSource2 = await query.ToListAsync();
+            }
+
+            // Filter by date range
+            if (parameters.StartPromotion.HasValue && parameters.EndPromotion.HasValue)
+            {
+                string DateFormat2 = "yyyy-MM-dd";
+                var ci = new CultureInfo("th-TH");
+                string d1 = " 00:00:00";
+                string d2 = " 23:59:59";
+                var startDate = Convert
+                    .ToDateTime(parameters.StartPromotion.Value.Date
+                    .ToString(DateFormat2, ci) + d1);
+                var endDate = Convert
+                    .ToDateTime(parameters.EndPromotion.Value.Date
+                    .ToString(DateFormat2, ci) + d2);
+
+                //Console.WriteLine(startDate + " " + endDate);
+
+                var results = await query.ToListAsync();
+                foreach (var item in results)
+                {
+                    string eh;
+                    var dateNow = Convert
+                        .ToDateTime(DateTime.Now
+                        .ToString(DateFormat2, ci) + d1);
+                    var dt = Convert
+                        .ToDateTime(item.StartPromotion
+                        .ToString(DateFormat2, ci) + d1);
+                    //Console.WriteLine("** {0}", dt);
+                    var td1 = Convert
+                        .ToDateTime(startDate
+                        .ToString(DateFormat2, ci) + d1);
+                    var td1end = Convert
+                        .ToDateTime(endDate
+                        .ToString(DateFormat2, ci) + d2);
+                    //Console.WriteLine("-*- {0}", startDate);
+                    //Console.WriteLine("-- {0}", endDate);
+                    if (dateNow >= startDate || dt >= td1)
+                    {
+                        if (dateNow < endDate || dt < td1end)
+                        {
+                            ids.Add(item.Id);
+                            bindingSource2.Add(item);
+                        }
+
+                    }
+
+                    List<int> productIds = await queryItem
+                   .Where(item => ids.Contains(item.Promotion_Id))
+                   .Select(item => item.Product_Id).ToListAsync();
+
+                    queryItem = queryItem.Where(item => ids.Contains(item.Promotion_Id));
+
+                    queryProduct = queryProduct.Where(p => productIds.Contains(p.Id));
+
+                    filteredPromotionItems = await queryItem.ToListAsync();
+                }
+            }
+
+
+            // Calculate total price by summing item prices and subtracting the discount
+            decimal totalPrice = await queryProduct.SumAsync(item => item.Price);
+            decimal discountedPrice = totalPrice - bindingSource2.Sum(promotion => promotion.Discount);
+
+            var result = new
+            {
+                PromotionItems = filteredPromotionItems,
+                Promotions = bindingSource2,
+                TotalPrice = totalPrice,
+                DiscountedPrice = discountedPrice
+            };
+            return Ok(result);
+        }
 
 
     }
