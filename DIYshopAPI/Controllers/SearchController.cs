@@ -93,12 +93,12 @@ namespace DIYshopAPI.Controllers
                     .Where(p => p.Type == parameters.Type)
                     .Select(p => p.Id).ToListAsync();
 
-                filteredOrderItems = await queryItem
-                    .Where(item => productIds.Contains(item.Product_id))
-                    .ToListAsync();
+                queryItem = queryItem
+                    .Where(item => productIds.Contains(item.Product_id));
+                var item = await queryItem.ToListAsync();
+                filteredOrderItems = item;
 
             }
-
 
             // Filter by date range
             if (parameters.StartDate.HasValue && parameters.EndDate.HasValue)
@@ -107,8 +107,12 @@ namespace DIYshopAPI.Controllers
                 var ci = new CultureInfo("th-TH");
                 string d1 = " 00:00:00";
                 string d2 = " 23:59:59";
-                var startDate = Convert.ToDateTime(parameters.StartDate.Value.Date.ToString(DateFormat2, ci) + d1);
-                var endDate = Convert.ToDateTime(parameters.EndDate.Value.Date.ToString(DateFormat2, ci) + d2);
+                var startDate = Convert
+                    .ToDateTime(parameters.StartDate.Value.Date
+                    .ToString(DateFormat2, ci) + d1);
+                var endDate = Convert
+                    .ToDateTime(parameters.EndDate.Value.Date
+                    .ToString(DateFormat2, ci) + d2);
 
                 //Console.WriteLine(startDate + " " + endDate);
 
@@ -116,10 +120,16 @@ namespace DIYshopAPI.Controllers
                 foreach (var item in results)
                 {
                     string eh;
-                    var dt = Convert.ToDateTime(item.Date.ToString(DateFormat2, ci) + d1);
+                    var dt = Convert
+                        .ToDateTime(item.Date
+                        .ToString(DateFormat2, ci) + d1);
                     //Console.WriteLine("** {0}", dt);
-                    var td1 = Convert.ToDateTime(startDate.ToString(DateFormat2, ci) + d1);
-                    var td1end = Convert.ToDateTime(endDate.ToString(DateFormat2, ci) + d2);
+                    var td1 = Convert
+                        .ToDateTime(startDate
+                        .ToString(DateFormat2, ci) + d1);
+                    var td1end = Convert
+                        .ToDateTime(endDate
+                        .ToString(DateFormat2, ci) + d2);
                     //Console.WriteLine("-*- {0}", startDate);
                     //Console.WriteLine("-- {0}", endDate);
                     if (item.Date >= startDate || dt >= td1)
@@ -136,29 +146,52 @@ namespace DIYshopAPI.Controllers
             // Filter by duration (number of days)
             if (parameters.Duration.HasValue)
             {
-                var startDate = DateTime.Now.AddDays(-parameters.Duration.Value);
-                query = query.OrderByDescending(item => item.Date >= startDate);
-                var item = await query.ToListAsync();
-                bindingSource2 = item;
+                var startDate = DateTime.Now
+                    .AddDays(-parameters.Duration.Value);
+
+                List<int> orderIds = await query.Where(item => item.Date >= startDate)
+                    .Select(o => o.Id).ToListAsync();
+
+                queryItem = queryItem
+                    .Where(item => orderIds.Contains(item.Order_Id));
+                var item = await queryItem.ToListAsync();
+                filteredOrderItems = item;
             }
 
             // Filter by latest number of days
             if (parameters.LatestDays.HasValue)
             {
-                var startDate = DateTime.Now.AddDays(-parameters.LatestDays.Value);
-                query = query.OrderByDescending(item => item.Date >= startDate);
-                var item = await query.ToListAsync();
-                bindingSource2 = item;
+                var startDate = DateTime.Now
+                    .AddDays(-parameters.LatestDays.Value);
+
+                List<int> orderIds = await query
+                    .Where(item => item.Date >= startDate)
+                    .Select(o => o.Id).ToListAsync();
+
+                queryItem = queryItem
+                    .Where(item => orderIds.Contains(item.Order_Id));
+                var item = await queryItem.ToListAsync();
+                filteredOrderItems = item;
             }
 
             // Filter by month
             if (parameters.Month.HasValue)
             {
+                string DateFormat2 = "yyyy-MM-dd";
+                var ci = new CultureInfo("th-TH");
                 int monthValue = parameters.Month.Value;
-                query = query.Where(item => item.Date.Month == monthValue)
-                             .OrderByDescending(item => item.Date);
-                var item = await query.ToListAsync();
-                bindingSource2 = item;
+                List<int> orderIds = await query.Where(item => item.Date.Month == monthValue)
+                             .Select(o => o.Id).ToListAsync();
+
+                foreach(var i in orderIds)
+                {
+                    Console.WriteLine(i);
+                }
+
+                queryItem = queryItem
+                    .Where(item => orderIds.Contains(item.Order_Id));
+                var item = await queryItem.ToListAsync();
+                filteredOrderItems = item;
 
             }
 
