@@ -34,7 +34,7 @@ namespace DIYshopAPI.Migrations.Order
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("OrderId")
                         .IsRequired()

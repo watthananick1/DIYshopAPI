@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DIYshopAPI.Migrations.Order
 {
     /// <inheritdoc />
-    public partial class addOrdersDb : Migration
+    public partial class addOrder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace DIYshopAPI.Migrations.Order
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: false),
                     OrderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Total_Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     User_Id = table.Column<int>(type: "int", nullable: false),

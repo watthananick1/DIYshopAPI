@@ -71,6 +71,7 @@ namespace DIYshopAPI.Controllers
             var dataOrder = order;
             if (order == null) return BadRequest();
 
+            order.Date = (DateTime)orderUpdate.Date;
             order.Total_Price = orderUpdate.Total_Price ?? dataOrder.Total_Price;
             order.User_Id = orderUpdate.User_Id ?? dataOrder.User_Id;
             order.Customer_Id = orderUpdate.Customer_Id ?? dataOrder.Customer_Id;

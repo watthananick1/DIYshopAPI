@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DIYshopAPI.Migrations.Order
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20230705080944_addOrdersDb")]
-    partial class addOrdersDb
+    [Migration("20230710095613_addOrder")]
+    partial class addOrder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
