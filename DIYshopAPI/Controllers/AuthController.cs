@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace DIYshopAPI.Controllers
 {
@@ -38,8 +39,12 @@ namespace DIYshopAPI.Controllers
             }
 
             string token = CreateToken(user);
-
-            return Ok(token);
+            var jsonData = new
+            {
+                token = token
+            };
+            var jsonString = JsonSerializer.Serialize(jsonData);
+            return Ok(jsonString);
         }
 
         private string CreateToken(User user) 
