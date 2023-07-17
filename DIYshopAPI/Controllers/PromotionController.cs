@@ -166,10 +166,15 @@ namespace DIYshopAPI.Controllers
             var promotion = await _context.Promotions.FindAsync(id);
             if (promotion == null) return NotFound();
 
+            var promotionProducts = await _context.PromotionProducts
+                .Where(pp => pp.Promotion_Id == id)
+                .ToListAsync();
+
+            _context.PromotionProducts.RemoveRange(promotionProducts);
+
             _context.Promotions.Remove(promotion);
             await _context.SaveChangesAsync();
             return NoContent();
-
         }
 
         [HttpDelete("Item={id}")]

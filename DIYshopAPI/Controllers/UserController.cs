@@ -51,11 +51,11 @@ namespace DIYshopAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
             user.Password = passwordHash;
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         }
 
