@@ -1,8 +1,12 @@
-﻿using DIYshopAPI.Data;
+﻿using System.Reflection.PortableExecutable;
+using DIYshopAPI.Data;
 using DIYshopAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PdfSharpCore;
+using PdfSharpCore.Pdf;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace DIYshopAPI.Controllers
 {
@@ -98,6 +102,83 @@ namespace DIYshopAPI.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
 
+        }
+
+        [HttpPost("listProductpdf")]
+        public async Task<IActionResult> GeneratePDF(int[] listproduct)
+        {
+            var document = new PdfDocument();
+            List<Product> products = new List<Product>();
+
+            foreach (int item in listproduct)
+            {
+                var product = await _context.Products.FindAsync(item);
+                if (product != null)
+                {
+                    Console.WriteLine(product);
+                    products.Add(product);
+                }
+            }
+
+            string htmlcontent = "<div style='width:100%; text-align:center'>";
+            htmlcontent += "<h2>ร้าน DIY Shop</h2>";
+            htmlcontent += "</div>";
+
+            htmlcontent += "<div style='text-align:left'>";
+            htmlcontent += "<h1> รายการสินค้า </h1>";
+
+            htmlcontent += "<table style ='width:100%; border: 1px solid #000'>";
+            htmlcontent += "<thead style='font-weight:bold'>";
+            htmlcontent += "<tr>";
+            htmlcontent += "<td style='border:1px solid #000'> ลำดับ </td>";
+            htmlcontent += "<td style='border:1px solid #000'> รหัสสินค้า </td>";
+            htmlcontent += "<td style='border:1px solid #000'> ชื่อสินค้า </td>";
+            htmlcontent += "<td style='border:1px solid #000'> จำนวนคงเหลือ </td>";
+            htmlcontent += "<td style='border:1px solid #000'> ราคา(หน่วย/บาท) </td >";
+            htmlcontent += "</tr>";
+            htmlcontent += "</thead >";
+
+            htmlcontent += "<tbody>";
+            var number = 0;
+            if (products != null && products.Count > 0)
+            {
+                products.ForEach(item =>
+                {
+                    number += 1;
+                    htmlcontent += "<tr>";
+                    htmlcontent += "<td style='text-align:center'>" + number + "</td>";
+                    htmlcontent += "<td>" + item.N_Id + "</td>";
+                    htmlcontent += "<td>" + item.Name + "</td>";
+                    htmlcontent += "<td>" + item.Stock + "</td >";
+                    htmlcontent += "<td>" + item.Price + "</td>";
+                    htmlcontent += "</tr>";
+                });
+            }
+            htmlcontent += "</tbody>";
+
+            htmlcontent += "</table>";
+
+            htmlcontent += "<div style='text-align:left'>";
+            htmlcontent += "<table style='float:left' >";
+            htmlcontent += "<tr>";
+            htmlcontent += "<td > จำนวนสินค้าทั้งหมด " + products.Count + " รายการ </td>";
+            htmlcontent += "</tr>";
+
+            htmlcontent += "</table>";
+            htmlcontent += "</div>";
+
+            htmlcontent += "</div>";
+
+            PdfGenerator.AddPdfPages(document, htmlcontent, PageSize.A4);
+            //}
+            byte[]? response = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                document.Save(ms);
+                response = ms.ToArray();
+            }
+            string Filename = "ListProduct" + ".pdf";
+            return File(response, "application/pdf", Filename);
         }
     }
 }

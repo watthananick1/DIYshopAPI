@@ -41,7 +41,8 @@ namespace DIYshopAPI.Controllers
             string token = CreateToken(user);
             var jsonData = new
             {
-                token = token
+                token = token,
+                status = user.Status
             };
             var jsonString = JsonSerializer.Serialize(jsonData);
             return Ok(jsonString);

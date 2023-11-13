@@ -8,6 +8,7 @@ using Microsoft.VisualBasic;
 using System.Globalization;
 using System.Linq;
 
+
 namespace DIYshopAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -396,7 +397,5 @@ namespace DIYshopAPI.Controllers
             };
             return Ok(result);
         }
-
-
     }
 }
