@@ -19,6 +19,12 @@ builder.Services.AddCors(options => options.AddPolicy(name: "DIYshopOrigins",
     {
         policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
     }));
+    
+builder.Services.AddCors(options => options.AddPolicy(name: "DIYshopOrigins",
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader();
+    }));
 
 builder.Services.AddDbContext<UserdbContext>(options =>
 {

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  diyshopapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=mssql-container; Database=shopDIYdb;User Id=sa;Password=Twk13877;Trusted_Connection=False;Encrypt=True;TrustServerCertificate=True;
+    ports:
+      - "5210:80"
+  mssql-container:
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      SA_PASSWORD: "Twk13877"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
